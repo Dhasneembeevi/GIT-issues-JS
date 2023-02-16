@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Issues</title>
+    <style>
+    #display-results{
+        margin: auto;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        font-size: x-large;
+        justify-content: space-between;
+
+    }
+    button{
+        padding: 10px;
+        margin: 10px;
+        font-size: large;
+        font-weight: 600;
+    }</style>
+</head>
+
+<body>
+
+    <div id="display-results">
+        <ol></ol>
+        <h2 id="pagenum"> </h2>
+        <button id="load_prev"> Previous</button>
+        <button id="load_next"> Next</button>
+    </div>
+    <script>
+        let pageNumberHere = 1;
+        const prev = document.getElementById('load_prev');
+        const next = document.getElementById('load_next');
+        function fetchIssues(pageNumberHere){
+            fetch(`https://api.github.com/repositories/1296269/issues?page=${pageNumberHere}&per_page=5`)
+            .then(response =>
+                response.json()
+            )
+            .then(data => {
+                console.log(data)
+                const issuesDisplay = document.querySelector('#display-results ol');
+                issuesDisplay.innerHTML = '';
+                data.forEach(issue => {
+                    const issueName = issue.title;
+                    const list = document.createElement('li')
+                    list.textContent = issueName;
+                    issuesDisplay.appendChild(list);
+                });
+                const pageNumber = document.getElementById('pagenum');
+                pageNumber.textContent = `Page number:${pageNumberHere}`;
+            })
+            .catch((error) => console.log(error))
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchIssues(pageNumberHere);
+            prev.addEventListener('click', ()=>{
+                if(pageNumberHere > 1){
+                    pageNumberHere--;
+                    fetchIssues(pageNumberHere)
+                }
+            })
+            next.addEventListener('click',()=>{
+                pageNumberHere++;
+                fetchIssues(pageNumberHere)
+            })
+
+        })
+
+
+
+
+
+    </script>
+</body>
+
+</html>
